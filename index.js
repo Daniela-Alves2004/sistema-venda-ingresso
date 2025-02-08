@@ -3,9 +3,13 @@ const { Sequelize, DataTypes } = require('sequelize');
 const session = require('express-session');
 const mustacheExpress= require('mustache-express');
 const engine = mustacheExpress();
+const ticketsRouter = require('./routes/tickets');
+const path = require('path');
+
 
 const app = express();
-
+app.use(express.urlencoded({ extended: true }));
+app.use(session({ secret: 'chave-secreta', resave: false, saveUninitialized: false }));
 
 app.engine('mustache',engine);
 app.set('view engine', 'mustache');
@@ -18,7 +22,8 @@ const sequelize = new Sequelize({
 
 const User = sequelize.define('User', {
     username: { type: DataTypes.STRING, allowNull: false, unique: true },
-    password: { type: DataTypes.STRING, allowNull: false }
+    password: { type: DataTypes.STRING, allowNull: false },
+    isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false }
 });
 
 const TicketType = sequelize.define('TicketType', {
@@ -34,18 +39,10 @@ const Purchase = sequelize.define('Purchase', {
 });
 
 app.post('/register', async (req, res) => {
-    const hashedPassword = await (req.body.password, 10);
-    await User.create({ username: req.body.username, password: hashedPassword });
-    res.send('Usuário cadastrado!');
-});
-
-app.use(express.urlencoded({ extended: true }));
-app.use(session({ secret: 'chave-secreta', resave: false, saveUninitialized: false }));
-
-app.post('/register', async (req, res) => {
     await User.create({ username: req.body.username, password: req.body.password });
     res.send('Usuário cadastrado!');
 });
+
 
 app.post('/login', async (req, res) => {
     const user = await User.findOne({ where: { username: req.body.username } });
@@ -59,23 +56,15 @@ app.post('/login', async (req, res) => {
 app.get('/login', (req, res) => {
     res.render('login');
 });
-app.post('/tickets', async (req, res) => {
-    if (!req.session.userId) return res.status(401).send('Acesso negado');
-
-    const user = await User.findByPk(req.session.userId);
-    if (!user || !user.isAdmin) return res.status(403).send('Apenas admins podem criar ingressos');
-
-    const ticket = await TicketType.create(req.body);
-    res.json(ticket);
-});
-
-
+app.use('/tickets', ticketsRouter);
 
 
 app.get('/', (req, res) => {
-    res.render('Sistema de Venda de Ingressos');
+    res.send('Sistema de Venda de Ingressos');
 });
 
 sequelize.sync().then(() => {
     app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
 });
+
+
