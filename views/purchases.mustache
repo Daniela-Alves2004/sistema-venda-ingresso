@@ -1,0 +1,8 @@
+<h1>Histórico de Compras</h1>
+<ul>
+    {{#purchases}}
+    <li>
+        Ingresso: {{TicketType.name}} - Quantidade: {{quantity}} - Preço Total: R$ {{TicketType.price}}
+    </li>
+    {{/purchases}}
+</ul>
