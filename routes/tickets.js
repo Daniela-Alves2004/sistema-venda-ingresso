@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { TicketType, User, Purchase } = require('../models');
+const { TicketType, Users, Purchase } = require('../models');
 
 router.post('/', async (req, res) => {
     if (!req.session.userId) return res.status(401).send('Acesso negado');
 
-    const user = await User.findByPk(req.session.userId);
+    const user = await Users.findByPk(req.session.userId);
     if (!user || !user.isAdmin) return res.status(403).send('Apenas admins podem criar ingressos');
 
     const ticket = await TicketType.create(req.body);
@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     if (!req.session.userId) return res.status(401).send('Acesso negado');
 
-    const user = await User.findByPk(req.session.userId);
+    const user = await Users.findByPk(req.session.userId);
     if (!user || !user.isAdmin) return res.status(403).send('Apenas admins podem editar ingressos');
 
     const ticket = await TicketType.findByPk(req.params.id);
@@ -44,7 +44,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     if (!req.session.userId) return res.status(401).send('Acesso negado');
 
-    const user = await User.findByPk(req.session.userId);
+    const user = await Users.findByPk(req.session.userId);
     if (!user || !user.isAdmin) return res.status(403).send('Apenas admins podem deletar ingressos');
 
     const ticket = await TicketType.findByPk(req.params.id);
@@ -59,7 +59,7 @@ router.delete('/:id', async (req, res) => {
 router.post('/:id/purchase', async (req, res) => {
     if (!req.session.userId) return res.status(401).send('Acesso negado');
 
-    const user = await User.findByPk(req.session.userId);
+    const user = await Users.findByPk(req.session.userId);
     const ticket = await TicketType.findByPk(req.params.id);
     const quantity = req.body.quantity;
 
@@ -81,6 +81,9 @@ router.post('/:id/purchase', async (req, res) => {
 
 router.get('/purchases', async (req, res) => {
     if (!req.session.userId) return res.status(401).send('Acesso negado');
+    const user = await Users.findByPk(req.session.userId);
+
+    if (!user) return res.status(401).send('Usuário não encontrado');
 
     const purchases = await Purchase.findAll({
         where: { userId: req.session.userId },

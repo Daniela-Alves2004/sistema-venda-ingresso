@@ -4,7 +4,7 @@ const sequelize = new Sequelize({
     storage: './database.sqlite'
 });
 
-const User = sequelize.define('User', {
+const Users = sequelize.define('User', {
     username: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false },
     isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false }
@@ -22,4 +22,4 @@ const Purchase = sequelize.define('Purchase', {
     quantity: { type: DataTypes.INTEGER, allowNull: false }
 });
 
-module.exports = { sequelize, User, TicketType, Purchase };
+module.exports = { sequelize, Users, TicketType, Purchase };
