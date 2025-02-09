@@ -8,14 +8,26 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    const user = await Users.findOne({ where: { username: req.body.username } });
-    if (user && req.body.password === user.password) {
-        req.session.userId = user.id;
-        res.send('Login realizado com sucesso!');
-    } else {
-        res.status(401).send('Credenciais inválidas');
+    try {
+        const user = await Users.findOne({ where: { username: req.body.username } });
+        if (!user) {
+            console.log('Usuário não encontrado');
+        } else {
+            console.log('Usuário encontrado:', user);
+        }
+        
+        if (user && req.body.password === user.password) {
+            req.session.userId = user.id;
+            res.send('Login realizado com sucesso!');
+        } else {
+            res.status(401).send('Credenciais inválidas');
+        }
+    } catch (error) {
+        console.error('Erro no login:', error);
+        res.status(500).send('Erro no servidor');
     }
 });
+
 
 router.get('/login', (req, res) => {
     res.render('login');

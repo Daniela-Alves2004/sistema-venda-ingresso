@@ -10,6 +10,7 @@ const adminRouter = require('./routes/admin');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: 'chave-secreta', resave: false, saveUninitialized: false }));
+app.use(express.json()); 
 
 app.engine('mustache', mustacheExpress());
 app.set('view engine', 'mustache');
