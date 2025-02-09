@@ -81,26 +81,17 @@ router.post('/:id/purchase', async (req, res) => {
 
 router.get('/purchases', async (req, res) => {
     if (!req.session.userId) {
-        console.log('Usuário não está autenticado');
         return res.status(401).send('Acesso negado');
     }
-
-    console.log('Usuário autenticado:', req.session.userId);
-
     const user = await User.findByPk(req.session.userId);
 
     if (!user) {
-        console.log('Usuário não encontrado');
         return res.status(401).send('Acesso negado');
     }
-
     const purchases = await Purchase.findAll({
         where: { userId: req.session.userId },
         include: [TicketType]
     });
-
-    console.log('Compras encontradas:', purchases);
-
     res.render('purchases', { purchases });
 });
 
