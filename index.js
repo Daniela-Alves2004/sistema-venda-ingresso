@@ -1,42 +1,29 @@
-const express = require('express');
-const session = require('express-session');
-const mustacheExpress = require('mustache-express');
-const path = require('path');
-const { sequelize, Users } = require('./models');
-const usersRouter = require('./routes/users');
-const ticketsRouter = require('./routes/tickets');
-const adminRouter = require('./routes/admin');
+require("dotenv").config();
+const express = require("express");
+const mustacheExpress = require("mustache-express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
+const { sequelize } = require("./models");
+const router = require("./routes");
 
 const app = express();
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(session({ secret: 'chave-secreta', resave: false, saveUninitialized: false }));
-app.use(express.json()); 
+app.use(cookieParser());
 
-app.engine('mustache', mustacheExpress());
-app.set('view engine', 'mustache');
-app.set('views', path.join(__dirname, 'views'));
+// Configuração do Mustache
+app.engine("mustache", mustacheExpress());
+app.set("view engine", "mustache");
+app.set("views", __dirname + "/views");
 
-app.use('/users', usersRouter);
-app.use('/tickets', ticketsRouter);
-app.use('/admin', adminRouter);
-   
-app.get('/', (req, res) => {
-    res.send('Sistema de Venda de Ingressos');
+// Rotas
+app.use("/", router);
+
+// Sincroniza o banco de dados e inicia o servidor
+sequelize.sync().then(() => {
+  app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
 });
-
-sequelize.sync().then(async () => {
-    console.log('Banco de dados sincronizado!');
-
-    const adminUser = await Users.findOne({ where: { username: 'admin' } });
-    if (!adminUser) {
-        await Users.create({
-            username: 'admin',
-            password: 'admin123',
-            isAdmin: true
-        });
-        console.log('Usuário administrador criado: admin/admin123');
-    }
-
-    app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
-}).catch(err => console.error('Erro ao sincronizar banco de dados:', err));
-
