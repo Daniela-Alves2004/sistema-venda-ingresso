@@ -2,6 +2,7 @@ const express = require("express");
 const { Ticket, Purchase, User } = require("../models");
 const authMiddleware = require("../middlewares/authMiddleware");
 const { login } = require("../controllers/loginController"); // Controlador de login
+const { register } = require("../controllers/registerController"); // Controlador de registro
 const router = express.Router();
 
 // Página inicial (listagem de ingressos)
@@ -19,6 +20,14 @@ router.get("/login", (req, res) => {
 
 // Processo de login
 router.post("/login", login); // Redireciona para o controlador de login
+
+router.get("/register", (req, res) => {
+    res.render("register"); // Certifique-se de ter um arquivo "register.mustache" na pasta views
+});
+
+
+router.post("/register", register);
+
 
 // Histórico de compras
 router.get("/purchases", authMiddleware, async (req, res) => {
