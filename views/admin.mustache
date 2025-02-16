@@ -1,0 +1,17 @@
+<script>
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        window.location.href = '/users/login'; // Redireciona se não estiver autenticado
+    }
+</script>
+
+<h1>Área Administrativa</h1>
+<button onclick="logout()">Logout</button>
+
+<script>
+    function logout() {
+        localStorage.removeItem('token'); // Remove o token
+        window.location.href = '/users/login'; // Redireciona para login
+    }
+</script>

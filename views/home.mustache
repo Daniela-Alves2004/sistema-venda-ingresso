@@ -1,0 +1,32 @@
+{{$title}} Ingressos Disponíveis {{$title}}
+{{$body}}
+<!-- Exemplo de navegação -->
+<nav>
+    <a href="/">Home</a> | 
+    <a href="/purchases">Meus Ingressos</a> | 
+
+    {{#isAuthenticated}}
+        <a href="/logout">Logout</a>
+    {{/isAuthenticated}}
+    {{#isNotAuthenticated}}
+        <a href="/login">Login</a>
+    {{/isNotAuthenticated}}
+</nav>
+
+<h2>Ingressos Disponíveis</h2>
+{{#tickets}}
+    <div>
+        <h3>{{name}} - R$ {{price}}</h3>
+        <p>Disponíveis: {{quantity}}</p>
+
+        {{#isAuthenticated}} <!-- Mostrar formulário de compra apenas para usuários autenticados -->
+        <form action="purchases" method="POST">
+            <input type="hidden" name="ticketId" value="{{id}}">
+            <label for="quantity">Quantidade:</label>
+            <input type="number" name="quantity" min="1" max="{{quantity}}" required>
+            <button type="submit">Comprar</button>
+        </form>
+        {{/isAuthenticated}} <!-- Fechando o bloco isAuthenticated -->
+    </div>
+{{/tickets}}
+{{$body}}

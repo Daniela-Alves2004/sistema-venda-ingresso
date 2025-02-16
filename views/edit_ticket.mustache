@@ -1,0 +1,8 @@
+<h1>Editar Ingresso</h1>
+<form action="/tickets/{{ticket.id}}" method="POST">
+    <input type="hidden" name="_method" value="PUT">
+    <input type="text" name="name" value="{{ticket.name}}" required>
+    <input type="number" name="price" value="{{ticket.price}}" required>
+    <input type="number" name="quantity" value="{{ticket.quantity}}" required>
+    <button type="submit">Salvar Alterações</button>
+</form>

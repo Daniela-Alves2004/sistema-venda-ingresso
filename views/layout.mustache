@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Ingressos</h1>
+        <nav>
+            <a href="/">Home</a>
+            {{#isAuthenticated}}
+                <a href="/purchase">Minhas Compras</a>
+                <a href="/logout">Logout</a>
+            {{/isAuthenticated}}
+            {{^isAuthenticated}}
+                <a href="/login">Login</a>
+            {{/isAuthenticated}}
+        </nav>
+    </header>
+    <main>
+        {{{body}}}
+    </main>
+</body>
+</html>
